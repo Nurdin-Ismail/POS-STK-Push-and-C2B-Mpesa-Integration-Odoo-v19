@@ -1,0 +1,51 @@
+.mpesa-callback-popup .callback-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.mpesa-callback-popup .callback-card:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.mpesa-callback-popup .callback-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.mpesa-callback-popup .callback-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.mpesa-callback-popup .callback-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.mpesa-callback-popup .callback-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.mpesa-callback-popup .callback-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.mpesa-callback-popup .alert {
+    border-radius: 8px;
+}
+
+.mpesa-callback-popup .btn {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.mpesa-callback-popup .callback-card .btn-primary {
+    transition: all 0.2s ease;
+}
+
+.mpesa-callback-popup .callback-card:hover .btn-primary {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

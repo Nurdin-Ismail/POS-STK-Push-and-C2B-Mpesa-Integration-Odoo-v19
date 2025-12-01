@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_mpesa_callback_entry_list" model="ir.ui.view">
+        <field name="name">mpesa.callback.entry.list</field>
+        <field name="model">mpesa.callback.entry</field>
+        <field name="arch" type="xml">
+            <list string="M-Pesa Callbacks" decoration-success="status=='success'"
+                decoration-danger="status in ('failed', 'cancelled')"
+                decoration-muted="status=='pending'"
+                decoration-info="is_reconciled==True">
+                <field name="create_date" string="Date" />
+                <field name="callback_type" />
+                <field name="checkout_request_id" optional="show" />
+                <field name="trans_id" optional="show" />
+                <field name="phone_number" />
+                <field name="amount" />
+                <field name="mpesa_receipt_number" />
+                <field name="status" widget="badge"
+                    decoration-success="status == 'success'"
+                    decoration-danger="status in ('failed', 'cancelled')"
+                    decoration-info="status == 'pending'" />
+                <field name="is_reconciled" />
+                <field name="result_desc" optional="hide" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_mpesa_callback_entry_form" model="ir.ui.view">
+        <field name="name">mpesa.callback.entry.form</field>
+        <field name="model">mpesa.callback.entry</field>
+        <field name="arch" type="xml">
+            <form string="M-Pesa Callback" create="false" edit="false" delete="false">
+                <header>
+                    <field name="status" widget="statusbar"
+                        statusbar_visible="pending,success,failed,cancelled" />
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="callback_type" />
+                            <field name="create_date" string="Callback Received" />
+                            <field name="status" />
+                        </group>
+                        <group string="Reconciliation">
+                            <field name="is_reconciled" />
+                            <field name="pos_order_id" />
+                            <field name="reconciled_date" />
+                        </group>
+                    </group>
+
+                    <group string="STK Push Details" invisible="callback_type != 'stk'">
+                        <group>
+                            <field name="merchant_request_id" />
+                            <field name="checkout_request_id" />
+                        </group>
+                        <group>
+                            <field name="result_code" />
+                            <field name="result_desc" />
+                        </group>
+                    </group>
+
+                    <group string="C2B Payment Details" invisible="callback_type != 'c2b'">
+                        <group>
+                            <field name="trans_id" />
+                            <field name="transaction_type" />
+                            <field name="customer_name" />
+                        </group>
+                        <group>
+                            <field name="bill_ref_number" />
+                        </group>
+                    </group>
+
+                    <group string="Transaction Details" invisible="status != 'success'">
+                        <group>
+                            <field name="amount" />
+                            <field name="mpesa_receipt_number" />
+                        </group>
+                        <group>
+                            <field name="phone_number" />
+                            <field name="transaction_date" />
+                        </group>
+                    </group>
+
+                    <group string="Raw Data">
+                        <field name="raw_callback_data" widget="text" nolabel="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_mpesa_callback_entry_search" model="ir.ui.view">
+        <field name="name">mpesa.callback.entry.search</field>
+        <field name="model">mpesa.callback.entry</field>
+        <field name="arch" type="xml">
+            <search string="M-Pesa Callbacks">
+                <field name="checkout_request_id" />
+                <field name="trans_id" />
+                <field name="mpesa_receipt_number" />
+                <field name="phone_number" />
+                <field name="merchant_request_id" />
+
+                <filter string="STK Push" name="filter_stk" domain="[('callback_type', '=', 'stk')]" />
+                <filter string="C2B Payments" name="filter_c2b"
+                    domain="[('callback_type', '=', 'c2b')]" />
+
+                <separator />
+
+                <filter string="Success" name="filter_success" domain="[('status', '=', 'success')]" />
+                <filter string="Failed" name="filter_failed" domain="[('status', '=', 'failed')]" />
+                <filter string="Cancelled" name="filter_cancelled"
+                    domain="[('status', '=', 'cancelled')]" />
+                <filter string="Pending" name="filter_pending" domain="[('status', '=', 'pending')]" />
+
+                <separator />
+
+                <filter string="Unreconciled" name="filter_unreconciled"
+                    domain="[('is_reconciled', '=', False), ('callback_type', '=', 'c2b')]" />
+                <filter string="Reconciled" name="filter_reconciled"
+                    domain="[('is_reconciled', '=', True)]" />
+
+                <separator />
+
+                <filter string="Today" name="filter_today"
+                    domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0, 0)))]" />
+                <filter string="Last 10 Minutes" name="filter_recent"
+                    domain="[('create_date', '&gt;=', (datetime.datetime.now() - datetime.timedelta(minutes=10)).strftime('%Y-%m-%d %H:%M:%S'))]" />
+                <filter string="This Week" name="filter_week"
+                    domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today() - datetime.timedelta(days=7), datetime.time(0, 0)))]" />
+                <filter string="This Month" name="filter_month"
+                    domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today().replace(day=1), datetime.time(0, 0)))]" />
+
+                <group name="group_by">
+                    <filter string="Callback Type" name="group_callback_type"
+                        context="{'group_by': 'callback_type'}" />
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
+                    <filter string="Date" name="group_date"
+                        context="{'group_by': 'create_date:day'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_mpesa_callback_entry" model="ir.actions.act_window">
+        <field name="name">M-Pesa Callbacks</field>
+        <field name="res_model">mpesa.callback.entry</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="context">{'create': False, 'search_default_filter_success': 1,
+            'search_default_filter_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No M-Pesa callbacks received yet
+            </p>
+            <p>
+                M-Pesa payment callbacks will appear here once customers complete payments.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_mpesa_callback_entry"
+        name="M-Pesa Callbacks"
+        parent="account.menu_finance_receivables"
+        action="action_mpesa_callback_entry"
+        sequence="20" />
+</odoo>

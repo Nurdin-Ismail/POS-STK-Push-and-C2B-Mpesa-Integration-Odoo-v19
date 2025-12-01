@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_payment_form_mpesa" model="ir.ui.view">
+        <field name="name">pos.payment.form.mpesa</field>
+        <field name="model">pos.payment</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_payment_form" />
+        <field name="arch" type="xml">
+            <field name="transaction_id" position="after">
+                <field name="mpesa_receipt_number" invisible="not mpesa_receipt_number" />
+                <field name="mpesa_phone_number" invisible="not mpesa_phone_number" />
+                <field name="mpesa_customer_name" invisible="not mpesa_customer_name" />
+                <field name="mpesa_transaction_date" invisible="not mpesa_transaction_date" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_pos_order_form_payment_mpesa" model="ir.ui.view">
+        <field name="name">pos.order.form.payment.mpesa</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_ids']/list/field[@name='cardholder_name']"
+                position="after">
+                <field name="mpesa_receipt_number" optional="show" />
+                <field name="mpesa_phone_number" optional="hide" />
+                <field name="mpesa_customer_name" optional="hide" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="mpesa_integration.PaymentScreenButtons"
+       t-inherit="point_of_sale.PaymentScreenButtons"
+       t-inherit-mode="extension">
+
+        <xpath expr="//div[contains(@class, 'payment-buttons')]" position="inside">
+            <button
+                t-if="hasMpesaPaymentMethod"
+                class="button js_mpesa_stkpush btn btn-secondary btn-lg d-flex justify-content-between align-items-baseline w-100 w-md-50 lh-lg"
+                t-on-click="toggleMpesaStk">
+                <span>
+                    <i class="fa fa-mobile me-2" />
+                    Pay via STK
+                </span>
+                <i class="fa me-2"
+                   t-att-class="isMpesaStkEnabled ? 'fa-check-square text-success' : 'fa-square-o text-muted'" />
+            </button>
+        </xpath>
+    </t>
+
+</templates>

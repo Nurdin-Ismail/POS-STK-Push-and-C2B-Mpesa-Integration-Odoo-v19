@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mpesa_callback_entry_user,mpesa.callback.entry.user,model_mpesa_callback_entry,base.group_user,1,0,0,0
+access_mpesa_callback_entry_manager,mpesa.callback.entry.manager,model_mpesa_callback_entry,account.group_account_manager,1,1,1,1
+access_mpesa_callback_entry_system,mpesa.callback.entry.system,model_mpesa_callback_entry,base.group_system,1,1,1,1

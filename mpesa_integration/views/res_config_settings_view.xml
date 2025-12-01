@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_res_config_settings_mpesa" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.mpesa.integration.company</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form" />
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@id='companies']" position="after">
+                    <div id="mpesa_settings" class="settings_tab">
+                        <block title="M-Pesa Integration" name="mpesa_setting_container"
+                            company_dependent="1">
+
+                            <!-- Header Section with Status -->
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-12 col-lg-6 o_setting_box">
+                                    <div class="o_setting_left_pane">
+                                        <i class="fa fa-mobile fa-3x text-primary" />
+                                    </div>
+                                    <div class="o_setting_right_pane">
+                                        <div class="content-group">
+                                            <div class="row">
+                                                <span class="col-lg-3 o_form_label">M-Pesa Status</span>
+                                                <div class="col-lg-9">
+                                                    <span class="badge rounded-pill text-bg-success"
+                                                        invisible="not mpesa_consumer_key or not mpesa_shortcode">
+                                                        <i class="fa fa-check-circle" /> Configured </span>
+                                                    <span class="badge rounded-pill text-bg-warning"
+                                                        invisible="mpesa_consumer_key and mpesa_shortcode">
+                                                        <i class="fa fa-exclamation-triangle" /> Not
+                                                        Configured </span>
+                                                </div>
+                                            </div>
+                                            <div class="row mt8"
+                                                invisible="not mpesa_consumer_key or not mpesa_shortcode">
+                                                <span class="col-lg-3 o_form_label">Environment</span>
+                                                <div class="col-lg-9">
+                                                    <span class="badge rounded-pill text-bg-info"
+                                                        invisible="mpesa_environment != 'sandbox'">
+                                                        <i class="fa fa-flask" /> Sandbox Mode </span>
+                                                    <span class="badge rounded-pill text-bg-danger"
+                                                        invisible="mpesa_environment != 'production'">
+                                                        <i class="fa fa-rocket" /> Production Mode </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-muted mt8 mb16">
+                                Configure your M-Pesa payment gateway credentials to enable mobile
+                                money payments in your POS and e-Commerce.
+                            </div>
+
+                            <!-- Environment Configuration -->
+                            <setting id="mpesa_environment_setting"
+                                string="Environment"
+                                help="Select Sandbox for testing or Production for live transactions">
+                                <field name="mpesa_environment" widget="radio" class="o_light_label" />
+                                <div class="text-muted mt8">
+                                    <i class="fa fa-info-circle" /> <b>Sandbox:</b> Use test
+                                    credentials for development and testing <br />
+                                    <i
+                                        class="fa fa-info-circle" /> <b>Production:</b> Use live
+                                    credentials for real transactions </div>
+                            </setting>
+
+                            <!-- Account Type -->
+                            <setting id="mpesa_account_type_setting"
+                                string="Account Type"
+                                help="Select your M-Pesa account type">
+                                <field name="mpesa_account_type" widget="radio"
+                                    class="o_light_label" />
+                                <div class="text-muted mt8">
+                                    <i class="fa fa-info-circle" /> <b>Paybill:</b> Business account
+                                    with a paybill number <br />
+                                    <i class="fa fa-info-circle" /> <b>Buy
+                                    Goods:</b> Business account with a till number </div>
+                            </setting>
+
+                            <!-- Divider -->
+                            <div class="border-bottom mb16 mt16" />
+
+                            <!-- Credentials Section -->
+                            <div class="text-muted fw-bold mb8">
+                                <i class="fa fa-key" /> API Credentials </div>
+
+                            <setting id="mpesa_consumer_key_setting" string="Consumer Key">
+                                <field name="mpesa_consumer_key"
+                                    placeholder="Enter your M-Pesa Consumer Key"
+                                    class="o_input_9ch w-100" />
+                                <div class="text-muted"> Get this from the <a
+                                        href="https://developer.safaricom.co.ke" target="_blank">Safaricom
+                                    Developer Portal</a>
+                                </div>
+                            </setting>
+
+                            <setting id="mpesa_consumer_secret_setting" string="Consumer Secret">
+                                <field name="mpesa_consumer_secret"
+                                    placeholder="Enter your M-Pesa Consumer Secret"
+                                    password="True"
+                                    class="o_input_9ch w-100" />
+                            </setting>
+
+                            <setting id="mpesa_shortcode_setting"
+                                string="Business Shortcode / Till Number">
+                                <field name="mpesa_shortcode"
+                                    placeholder="e.g., 174379 or 600XXX"
+                                    class="o_input_9ch" />
+                                <div class="text-muted">
+                                    Your paybill number or till number depending on account type
+                                </div>
+                            </setting>
+
+                            <setting id="mpesa_passkey_setting"
+                                string="Lipa Na M-Pesa Passkey"
+                                help="Required for STK Push payments">
+                                <field name="mpesa_passkey"
+                                    placeholder="Enter Lipa Na M-Pesa Online Passkey"
+                                    password="True"
+                                    class="o_input_9ch w-100" />
+                                <div class="text-muted">
+                                    Only required if using STK Push (Lipa Na M-Pesa Online)
+                                </div>
+                            </setting>
+
+                            <!-- Test Connection Button -->
+                            <div class="row mt16">
+                                <div class="col-12">
+                                    <button name="action_test_connection"
+                                        type="object"
+                                        string="Test Connection"
+                                        class="btn btn-secondary"
+                                        icon="fa-plug"
+                                        invisible="not mpesa_consumer_key or not mpesa_consumer_secret">
+                                        <i class="fa fa-plug" /> Test Connection </button>
+                                </div>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="border-bottom mb16 mt16" />
+
+                            <!-- C2B Registration Section -->
+                            <div class="text-muted fw-bold mb8">
+                                <i class="fa fa-link" /> C2B Callback Registration </div>
+
+                            <setting id="mpesa_callback_url_setting" string="Callback URL">
+                                <field name="mpesa_callback_url"
+                                    class="o_input_9ch w-100"
+                                    readonly="1" />
+                                <div class="text-muted">
+                                    This URL will receive payment notifications from M-Pesa
+                                </div>
+                            </setting>
+
+                            <setting id="mpesa_c2b_registration_setting" string="C2B Status">
+                                <div class="content-group">
+                                    <!-- Active Status - Prominent Display -->
+                                    <div class="alert alert-success d-flex align-items-center mb-3"
+                                        role="alert"
+                                        invisible="not mpesa_c2b_registered">
+                                        <i class="fa fa-check-circle fa-2x me-3 text-success" />
+                                        <div class="flex-grow-1">
+                                            <h6 class="alert-heading mb-1">
+                                                <i class="fa fa-check" /> C2B Callbacks Are Active! </h6>
+                                            <small class="text-muted">
+                                                Your callback URLs are registered with Safaricom and
+                                                ready to receive payments.
+                                            </small>
+                                            <div class="mt-1"
+                                                invisible="not mpesa_c2b_registered_date">
+                                                <small class="text-muted">
+                                                    <i class="fa fa-calendar" /> Registered on: <field
+                                                        name="mpesa_c2b_registered_date"
+                                                        readonly="1" class="fw-bold" />
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Not Registered Status -->
+                                    <div class="alert alert-warning d-flex align-items-center mb-3"
+                                        role="alert"
+                                        invisible="mpesa_c2b_registered">
+                                        <i
+                                            class="fa fa-exclamation-triangle fa-2x me-3 text-warning" />
+                                        <div class="flex-grow-1">
+                                            <h6 class="alert-heading mb-1">
+                                                <i class="fa fa-exclamation-circle" /> C2B Not
+                                                Registered </h6>
+                                            <small class="text-muted">
+                                                Register your callback URLs to start receiving
+                                                direct customer payments.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <field name="mpesa_c2b_registered" invisible="1" />
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex gap-2">
+                                        <button name="action_register_c2b_urls"
+                                            type="object"
+                                            string="Register C2B Callback URLs"
+                                            class="btn btn-primary"
+                                            icon="fa-cloud-upload"
+                                            invisible="not mpesa_shortcode or not mpesa_consumer_key or mpesa_c2b_registered">
+                                            <i class="fa fa-cloud-upload" /> Register C2B Callback
+                                            URLs </button>
+                                        <button name="action_register_c2b_urls"
+                                            type="object"
+                                            string="Re-register"
+                                            class="btn btn-warning"
+                                            icon="fa-refresh"
+                                            invisible="not mpesa_c2b_registered"
+                                            confirm="This will re-register your callback URLs with Safaricom. Continue?">
+                                            <i class="fa fa-refresh" /> Re-register URLs </button>
+                                    </div>
+
+                                    <div class="alert alert-info mt8" role="alert">
+                                        <i class="fa fa-info-circle" />
+                                        <strong>About C2B Registration:</strong>
+                                        <ul class="mb-0 mt-1">
+                                            <li>This registers your callback URL with Safaricom</li>
+                                            <li>Required to receive notifications for direct
+                                                customer payments</li>
+                                            <li>Only needs to be done once per shortcode</li>
+                                            <li>Re-register if you change your callback URL or
+                                                shortcode</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </setting>
+
+                            <!-- Help Section -->
+                            <div class="alert alert-warning mt16" role="alert">
+                                <h5 class="alert-heading">
+                                    <i class="fa fa-exclamation-triangle" /> Important Notes </h5>
+                                <ul class="mb-0">
+                                    <li><strong>Sandbox credentials</strong> are for testing only
+                                        and won't process real money</li>
+                                    <li><strong>Production credentials</strong> must be obtained
+                                        after KYC verification by Safaricom</li>
+                                    <li>Ensure your <strong>callback URL is publicly accessible</strong>
+                                        (no localhost)</li>
+                                    <li>Test thoroughly in <strong>Sandbox mode</strong> before
+                                        going live</li>
+                                </ul>
+                            </div>
+
+                        </block>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
